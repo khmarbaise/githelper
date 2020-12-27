@@ -1,4 +1,4 @@
-package branches
+package modules
 
 import "github.com/go-git/go-git/v5"
 
