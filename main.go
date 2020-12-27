@@ -11,7 +11,9 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/urfave/cli/v2"
+	"log"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -90,18 +92,39 @@ func firstGitFunction() {
 
 	fmt.Println(cCount)
 
-	worktree, err := gitRepo.Worktree()
-	CheckIfError(err)
+	//worktree, err := gitRepo.Worktree()
+	//CheckIfError(err)
 
-	branchRef := plumbing.NewBranchReferenceName("master")
+	//branchRef := plumbing.NewBranchReferenceName("master")
 
+	remote, err := gitRepo.Remote(ref.Name().String())
+	if err == nil {
+		fmt.Printf("Remote: %v\n", remote.Config())
+	} else {
+		//TODO: Reconsider: remote does not exist ! => Failure?
+		fmt.Printf("Remote branch %v not found  %v\n", ref.Name(), err)
+	}
 	fmt.Printf("Checking out %v...", "master")
 	//TODO: We should check for either master/main and use the one we found.
-	checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
-	err = worktree.Checkout(&checkoutOptions)
+	//checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
+	runCmd("git", "checkout", "master")
+	//err = worktree.Checkout(&checkoutOptions)
 	CheckIfError(err)
 
 	fmt.Printf("\n")
+}
+
+func runCmd(cmd ...string) {
+	log.Printf("Executing : %s ...\n", cmd)
+	c := exec.Command(cmd[0], cmd[1:]...)
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+	if err := c.Start(); err != nil {
+		log.Panicln(err)
+	}
+	if err := c.Wait(); err != nil {
+		log.Panicln(err)
+	}
 }
 
 // CheckIfError should be used to naively panics if an error is not nil.

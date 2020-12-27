@@ -16,3 +16,17 @@ task.
 
 First step using go-git.
 First working example with checkout to master.
+
+
+## TODO
+
+
+```shell
+$ (BRX)$ pwd
+$ (BRX)$ git st
+On branch BRX
+Your branch is based on 'origin/BRX', but the upstream is gone.
+(use "git branch --unset-upstream" to fixup)
+
+nothing to commit, working tree clean
+```
