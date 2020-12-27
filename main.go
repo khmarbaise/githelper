@@ -8,6 +8,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/urfave/cli/v2"
 	"os"
@@ -50,7 +51,7 @@ func firstGitFunction() {
 	ref, err := gitRepo.Head()
 	CheckIfError(err)
 
-	fmt.Printf("Head Reference: name: %v type: %v hash: %v strings:%v", ref.Name(), ref.Type(), ref.Hash(), ref.Strings())
+	fmt.Printf("Head Reference: name: %v type: %v hash: %v strings:%v\n", ref.Name(), ref.Type(), ref.Hash(), ref.Strings())
 	cIter, err := gitRepo.Log(&git.LogOptions{From: ref.Hash()})
 	CheckIfError(err)
 
@@ -60,7 +61,25 @@ func firstGitFunction() {
 
 	branch := ref.Name().String()[len(branchPrefix):]
 
+	//if branch != "main" && branch != "master" {
+	//	fmt.Errorf("We are main/master.", branch)
+	//}
+
 	fmt.Printf("Branch name: %v\n", branch)
+
+	branches, err := gitRepo.Branches()
+	CheckIfError(err)
+	var branchNames []string
+	_ = branches.ForEach(func(branch *plumbing.Reference) error {
+		fmt.Printf(" -> %v hash:%v type:%v \n", branch.Name(), branch.Hash(), branch.Type())
+		branchNames = append(branchNames, strings.TrimPrefix(branch.Name().String(), branchPrefix))
+		return nil
+	})
+
+	for _, branch := range branchNames {
+		fmt.Printf("Branch: '%v'\n", branch)
+	}
+
 	// ... just iterates over the commits
 	var cCount int
 	err = cIter.ForEach(func(c *object.Commit) error {
@@ -70,6 +89,19 @@ func firstGitFunction() {
 	CheckIfError(err)
 
 	fmt.Println(cCount)
+
+	worktree, err := gitRepo.Worktree()
+	CheckIfError(err)
+
+	branchRef := plumbing.NewBranchReferenceName("master")
+
+	fmt.Printf("Checking out %v...", "master")
+	//TODO: We should check for either master/main and use the one we found.
+	checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
+	err = worktree.Checkout(&checkoutOptions)
+	CheckIfError(err)
+
+	fmt.Printf("\n")
 }
 
 // CheckIfError should be used to naively panics if an error is not nil.
