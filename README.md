@@ -15,3 +15,4 @@ Currently I use a lot of shell scripts which help me a lot about my daily
 task.
 
 First step using go-git.
+First working example with checkout to master.
