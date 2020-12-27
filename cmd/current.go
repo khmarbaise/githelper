@@ -6,12 +6,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//GitPushWithLease git push with lease.
+//Current prints out some information about the current branch.
 var Current = cli.Command{
 	Name:        "current",
 	Aliases:     []string{"cr"},
-	Usage:       "git push with lease.",
-	Description: "Git push with lease (git push --force-with-lease)",
+	Usage:       "current",
+	Description: "Print out information about the current branch.",
 	Action:      current,
 }
 
