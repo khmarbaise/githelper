@@ -40,17 +40,27 @@ func main() {
 	firstGitFunction()
 }
 
+// branchPrefix base dir of the branch information file store on git
+const branchPrefix = "refs/heads/"
+
 func firstGitFunction() {
-	r, err := git.PlainOpen(".")
+	gitRepo, err := git.PlainOpen(".")
 	CheckIfError(err)
 
-	ref, err := r.Head()
+	ref, err := gitRepo.Head()
 	CheckIfError(err)
 
 	fmt.Printf("Head Reference: name: %v type: %v hash: %v strings:%v", ref.Name(), ref.Type(), ref.Hash(), ref.Strings())
-	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
+	cIter, err := gitRepo.Log(&git.LogOptions{From: ref.Hash()})
 	CheckIfError(err)
 
+	if !strings.HasPrefix(ref.Name().String(), branchPrefix) {
+		fmt.Errorf("invalid HEAD branch: %v", ref.String())
+	}
+
+	branch := ref.Name().String()[len(branchPrefix):]
+
+	fmt.Printf("Branch name: %v\n", branch)
 	// ... just iterates over the commits
 	var cCount int
 	err = cIter.ForEach(func(c *object.Commit) error {
@@ -59,7 +69,8 @@ func firstGitFunction() {
 	})
 	CheckIfError(err)
 
-	fmt.Println(cCount)}
+	fmt.Println(cCount)
+}
 
 // CheckIfError should be used to naively panics if an error is not nil.
 func CheckIfError(err error) {
