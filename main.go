@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// Drone Settings is command line tool for githelper.
+// githelp is command line tool to support the handling of branches and merges with feature branches.
 package main
 
 import (
