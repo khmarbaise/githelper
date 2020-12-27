@@ -72,7 +72,6 @@ func mergeAndClean(ctx *cli.Context) error {
 		return nil
 	}
 
-	// Need more.
 	//branchRef := plumbing.NewBranchReferenceName("master")
 
 	remote, err := gitRepo.Remote(ref.Name().String())
