@@ -59,12 +59,15 @@ func firstGitFunction() {
 	}
 
 	branch := ref.Name().String()[len(branchPrefix):]
+	branchHash := ref.Hash()
 
+	//FIXME: Check for main/master
 	//if branch != "main" && branch != "master" {
 	//	fmt.Errorf("We are main/master.", branch)
 	//}
 
 	fmt.Printf("Branch name: %v\n", branch)
+	fmt.Printf("Branch hash: %v\n", branchHash)
 
 	branches, err := gitRepo.Branches()
 	CheckIfError(err)
