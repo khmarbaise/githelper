@@ -21,6 +21,7 @@ First working example with checkout to master.
 ## TODO
 
 
+Another scenario
 ```shell
 $ (BRX)$ pwd
 $ (BRX)$ git st
