@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
@@ -54,8 +53,6 @@ func firstGitFunction() {
 	CheckIfError(err)
 
 	fmt.Printf("Head Reference: name: %v type: %v hash: %v strings:%v\n", ref.Name(), ref.Type(), ref.Hash(), ref.Strings())
-	cIter, err := gitRepo.Log(&git.LogOptions{From: ref.Hash()})
-	CheckIfError(err)
 
 	if !strings.HasPrefix(ref.Name().String(), branchPrefix) {
 		fmt.Errorf("invalid HEAD branch: %v", ref.String())
@@ -82,18 +79,17 @@ func firstGitFunction() {
 		fmt.Printf("Branch: '%v'\n", branch)
 	}
 
-	// ... just iterates over the commits
-	var cCount int
-	err = cIter.ForEach(func(c *object.Commit) error {
-		cCount++
-		return nil
-	})
+	worktree, err := gitRepo.Worktree()
 	CheckIfError(err)
 
-	fmt.Println(cCount)
-
-	//worktree, err := gitRepo.Worktree()
-	//CheckIfError(err)
+	status, err := worktree.Status()
+	CheckIfError(err)
+	if !status.IsClean() {
+		fmt.Println("Status: **NOT CLEAN**")
+		fmt.Println("Please commit your changes or stash them before you switch branches.")
+		// stop working because we can't change the branch.
+		return
+	}
 
 	//branchRef := plumbing.NewBranchReferenceName("master")
 
@@ -103,13 +99,13 @@ func firstGitFunction() {
 	} else {
 		//TODO: Reconsider: remote does not exist ! => Failure?
 		fmt.Printf("Remote branch %v not found  %v\n", ref.Name(), err)
+		return
 	}
 	fmt.Printf("Checking out %v...", "master")
 	//TODO: We should check for either master/main and use the one we found.
 	//checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
-	runCmd("git", "checkout", "master")
 	//err = worktree.Checkout(&checkoutOptions)
-	CheckIfError(err)
+	runCmd("git", "checkout", "master")
 
 	fmt.Printf("\n")
 }
