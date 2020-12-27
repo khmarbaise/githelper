@@ -13,3 +13,5 @@ The current state of development is `Prototype`. Not usable at the moment.
 
 Currently I use a lot of shell scripts which help me a lot about my daily
 task.
+
+First step using go-git.
