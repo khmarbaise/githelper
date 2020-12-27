@@ -26,6 +26,7 @@ func main() {
 	app.Version = Version + formatBuiltWith(Tags)
 	app.Commands = []*cli.Command{
 		&cmd.GitMergeAndClean,
+		&cmd.GitPushWithLease,
 	}
 	app.EnableBashCompletion = true
 	err := app.Run(os.Args)
