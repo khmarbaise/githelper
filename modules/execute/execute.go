@@ -1,4 +1,4 @@
-package modules
+package execute
 
 import (
 	"log"
@@ -6,8 +6,8 @@ import (
 	"os/exec"
 )
 
-//RunExternalGit Execute git externally as subprocess.
-func RunExternalGit(cmd ...string) {
+//RunExternalCommand Execute external command as subprocess.
+func RunExternalCommand(cmd ...string) {
 	log.Printf("Executing : %s ...\n", cmd)
 	c := exec.Command(cmd[0], cmd[1:]...)
 	c.Stdout = os.Stdout

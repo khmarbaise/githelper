@@ -1,23 +1,29 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/khmarbaise/githelper/modules"
+	"github.com/khmarbaise/githelper/modules/execute"
 	"github.com/urfave/cli/v2"
 	"os"
 	"strings"
 )
 
-//GitMergeAndClean The execution of the git merge and clean.
-var GitMergeAndClean = cli.Command{
-	Name:        "gitmergeandclean",
-	Aliases:     []string{"gmc"},
-	Usage:       "git merge and clean.",
-	Description: "Merge current branch via fast-forward into master.",
-	Action:      mergeAndClean,
-}
+var (
+	//GitMergeAndClean The execution of the git merge and clean.
+	GitMergeAndClean = cli.Command{
+		Name:        "gitmergeandclean",
+		Aliases:     []string{"gmc"},
+		Usage:       "git merge and clean.",
+		Description: "Merge current branch via fast-forward into master.",
+		Action:      mergeAndClean,
+	}
+
+	//ErrorPleaseCommitYourChange Is thrown if you have changes locally and not committed.
+	ErrorPleaseCommitYourChange = errors.New("please commit your changes or stash them before you switch branches")
+)
 
 // branchPrefix base dir of the branch information file store on git
 const branchPrefix = "refs/heads/"
@@ -66,10 +72,7 @@ func mergeAndClean(ctx *cli.Context) error {
 	CheckIfError(err)
 	if !status.IsClean() {
 		fmt.Println("Status: **NOT CLEAN**")
-		fmt.Println("Please commit your changes or stash them before you switch branches.")
-		// stop working because we can't change the branch.
-		//FIXME: return a real error!!!
-		return nil
+		return ErrorPleaseCommitYourChange
 	}
 
 	//branchRef := plumbing.NewBranchReferenceName("master")
@@ -88,7 +91,7 @@ func mergeAndClean(ctx *cli.Context) error {
 
 	//TODO: We should check for either master/main and use the one we found.
 	// modules.SearchForBranch(...)
-	modules.RunExternalGit("git", "checkout", "master")
+	execute.RunExternalCommand("git", "checkout", "master")
 
 	fmt.Printf("\n")
 
