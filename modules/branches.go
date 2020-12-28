@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -13,6 +12,7 @@ func SearchForBranch(repository *git.Repository) error {
 	return nil
 }
 
+//CurrentBranch Defines information about current branch the name and the hash.
 type CurrentBranch struct {
 	Branch string
 	Hash   plumbing.Hash
@@ -30,7 +30,7 @@ func GetCurrentBranch(gitRepo *git.Repository) (currentBranch CurrentBranch, err
 	}
 
 	if !strings.HasPrefix(ref.Name().String(), BranchPrefix) {
-		err = errors.New(fmt.Sprintf("invalid HEAD Branch: %v", ref.String()))
+		err = fmt.Errorf("invalid HEAD Branch: %v", ref.String())
 		return
 	}
 
