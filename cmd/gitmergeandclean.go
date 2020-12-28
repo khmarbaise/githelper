@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/khmarbaise/githelper/modules"
+	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/khmarbaise/githelper/modules/execute"
 	"github.com/urfave/cli/v2"
-	"os"
 	"strings"
 )
 
@@ -25,39 +26,28 @@ var (
 	ErrorPleaseCommitYourChange = errors.New("please commit your changes or stash them before you switch branches")
 )
 
-// branchPrefix base dir of the branch information file store on git
-const branchPrefix = "refs/heads/"
-
 func mergeAndClean(ctx *cli.Context) error {
 	gitRepo, err := git.PlainOpen(".")
-	CheckIfError(err)
+	check.IfError(err)
 
-	ref, err := gitRepo.Head()
-	CheckIfError(err)
+	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 
-	fmt.Printf("Head Reference: name: %v type: %v hash: %v strings:%v\n", ref.Name(), ref.Type(), ref.Hash(), ref.Strings())
-
-	if !strings.HasPrefix(ref.Name().String(), branchPrefix) {
-		fmt.Errorf("invalid HEAD branch: %v", ref.String())
-	}
-
-	branch := ref.Name().String()[len(branchPrefix):]
-	branchHash := ref.Hash()
+	check.IfError(err)
 
 	//FIXME: Check for main/master
 	//if branch != "main" && branch != "master" {
 	//	fmt.Errorf("We are main/master.", branch)
 	//}
 
-	fmt.Printf("Branch name: %v\n", branch)
-	fmt.Printf("Branch hash: %v\n", branchHash)
+	fmt.Printf("Branch name: %v\n", currentBranch.Branch)
+	fmt.Printf("Branch hash: %v\n", currentBranch.Hash)
 
 	branches, err := gitRepo.Branches()
-	CheckIfError(err)
+	check.IfError(err)
 	var branchNames []string
 	_ = branches.ForEach(func(branch *plumbing.Reference) error {
 		fmt.Printf(" -> %v hash:%v type:%v \n", branch.Name(), branch.Hash(), branch.Type())
-		branchNames = append(branchNames, strings.TrimPrefix(branch.Name().String(), branchPrefix))
+		branchNames = append(branchNames, strings.TrimPrefix(branch.Name().String(), modules.BranchPrefix))
 		return nil
 	})
 
@@ -66,10 +56,10 @@ func mergeAndClean(ctx *cli.Context) error {
 	}
 
 	worktree, err := gitRepo.Worktree()
-	CheckIfError(err)
+	check.IfError(err)
 
 	status, err := worktree.Status()
-	CheckIfError(err)
+	check.IfError(err)
 	if !status.IsClean() {
 		fmt.Println("Status: **NOT CLEAN**")
 		return ErrorPleaseCommitYourChange
@@ -77,12 +67,12 @@ func mergeAndClean(ctx *cli.Context) error {
 
 	//branchRef := plumbing.NewBranchReferenceName("master")
 
-	remote, err := gitRepo.Remote(ref.Name().String())
+	remote, err := gitRepo.Remote(currentBranch.Branch)
 	if err == nil {
 		fmt.Printf("Remote: %v\n", remote.Config())
 	} else {
 		//TODO: Reconsider: remote does not exist ! => Failure?
-		fmt.Printf("Remote branch %v not found  %v\n", ref.Name(), err)
+		fmt.Printf("Remote branch %v not found  %v\n", currentBranch.Branch, err)
 		return err
 	}
 	fmt.Printf("Checking out %v...", "master")
@@ -91,19 +81,9 @@ func mergeAndClean(ctx *cli.Context) error {
 
 	//TODO: We should check for either master/main and use the one we found.
 	// modules.SearchForBranch(...)
-	execute.RunExternalCommand("git", "checkout", "master")
+	execute.ExternalCommand("git", "checkout", "master")
 
 	fmt.Printf("\n")
 
 	return nil
-}
-
-// CheckIfError should be used to naively panics if an error is not nil.
-func CheckIfError(err error) {
-	if err == nil {
-		return
-	}
-
-	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
-	os.Exit(1)
 }

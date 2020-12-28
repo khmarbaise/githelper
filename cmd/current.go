@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/khmarbaise/githelper/modules"
+	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,16 +19,14 @@ var Current = cli.Command{
 
 func current(ctx *cli.Context) error {
 	gitRepo, err := git.PlainOpen(".")
-	CheckIfError(err)
+	check.IfError(err)
 
-	ref, err := gitRepo.Head()
-	CheckIfError(err)
+	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 
-	fmt.Printf("    name: %v\n", ref.Name().String())
-	fmt.Printf("isBranch: %v\n", ref.Name().IsBranch())
-	fmt.Printf("isRemote: %v\n", ref.Name().IsRemote())
-	fmt.Printf("    type: %v\n", ref.Type())
-	fmt.Printf("    hash: %v\n", ref.Hash())
+	check.IfError(err)
+
+	fmt.Printf(" name: %v\n", currentBranch.Branch)
+	fmt.Printf(" hash: %v\n", currentBranch.Hash)
 
 	return nil
 }

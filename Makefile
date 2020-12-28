@@ -110,7 +110,7 @@ fmt-check:
 
 .PHONY: test
 test:
-	$(GO) test -mod=vendor $(PACKAGES)
+	$(GO) test -v -mod=vendor $(PACKAGES)
 
 .PHONY: unit-test-coverage
 unit-test-coverage:
