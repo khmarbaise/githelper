@@ -15,7 +15,6 @@ func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
 
 	var branchNames []string
 	_ = branches.ForEach(func(branch *plumbing.Reference) error {
-		fmt.Printf(" -> %v hash:%v type:%v \n", branch.Name(), branch.Hash(), branch.Type())
 		branchName := strings.TrimPrefix(branch.Name().String(), BranchPrefix)
 		if check.IsMainBranch(branchName) {
 			branchNames = append(branchNames, branchName)
