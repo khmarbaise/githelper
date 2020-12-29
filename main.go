@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// githelp is command line tool to support the handling of branches and merges with feature branches.
+// githelper is command line tool to support the handling of branches and merges with feature branches.
 package main
 
 import (
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// Version holds the current tea version
+// Version holds the current githelper version
 var Version = "development"
 
 // Tags holds the build tags used
