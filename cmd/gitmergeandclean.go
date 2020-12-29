@@ -52,23 +52,31 @@ func mergeAndClean(ctx *cli.Context) error {
 		return ErrorPleaseCommitYourChange
 	}
 
-	//branchRef := plumbing.NewBranchReferenceName("master")
+	fmt.Printf("Checking out %v...", mainBranch)
+	b, err := execute.ExternalCommandWithRedirect("git", "checkout", mainBranch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+	fmt.Println("done.")
 
-	fmt.Printf("Checking out %v\n", mainBranch)
-	execute.ExternalCommand("git", "checkout", mainBranch)
+	fmt.Printf("Merging %v into %v via fast forward only...", currentBranch.Branch, mainBranch)
+	b, err = execute.ExternalCommandWithRedirect("git", "merge", "--ff-only", currentBranch.Branch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+	fmt.Println("done.")
 
-	fmt.Printf("Merging %v into %v via fast forward only\n", currentBranch.Branch, mainBranch)
-	execute.ExternalCommand("git", "merge", "--ff-only", currentBranch.Branch)
+	fmt.Printf("Push %v to remote...", mainBranch)
+	b, err = execute.ExternalCommandWithRedirect("git", "push", "origin", mainBranch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+	fmt.Println("done.")
 
-	fmt.Printf("Push %v to remote\n", mainBranch)
-	execute.ExternalCommand("git", "push", "origin", mainBranch)
+	fmt.Printf("Delete remote %v...", currentBranch.Branch)
+	b, err = execute.ExternalCommandWithRedirect("git", "push", "origin", "--delete", currentBranch.Branch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+	fmt.Println("done.")
 
-	fmt.Printf("Delete remote %v\n", currentBranch.Branch)
-	execute.ExternalCommand("git", "push", "origin", "--delete", currentBranch.Branch)
-
-	fmt.Printf("Delete local %v \n", currentBranch.Branch)
+	fmt.Printf("Delete local %v...", currentBranch.Branch)
 	// We assume that the merge has been done successfully otherwise this will fail.
-	execute.ExternalCommand("git", "branch", "-d", currentBranch.Branch)
+	b, err = execute.ExternalCommandWithRedirect("git", "branch", "-d", currentBranch.Branch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+	fmt.Println("done.")
 
 	return nil
 

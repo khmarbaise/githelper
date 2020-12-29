@@ -27,9 +27,9 @@ type CommandOutput struct {
 	Stderr string
 }
 
-//ExternalCommandB Execute external command as subprocess and return stdout and stderr
+//ExternalCommandWithRedirect Execute external command as subprocess and return stdout and stderr
 //plus possible error.
-func ExternalCommandB(cmd ...string) (result CommandOutput, err error) {
+func ExternalCommandWithRedirect(cmd ...string) (result CommandOutput, err error) {
 	log.Printf("Executing : %s ...\n", cmd)
 
 	c := exec.Command(cmd[0], cmd[1:]...)

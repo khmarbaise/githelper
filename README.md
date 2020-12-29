@@ -7,7 +7,7 @@
 The current state of development is `Prototype`.
 
 * Scenario
-** Branch can be merged into main via `githelper gmc`
+  * Branch can be merged into main via `githelper gmc`
 
 # Overview
 
