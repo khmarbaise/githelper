@@ -7,7 +7,6 @@ import (
 	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/khmarbaise/githelper/modules/execute"
 	"github.com/urfave/cli/v2"
-	"strings"
 )
 
 //GitPushWithLease git push with lease.
@@ -26,8 +25,8 @@ func pushWithLease(ctx *cli.Context) error {
 	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 	check.IfError(err)
 
-	if isMainBranch(currentBranch.Branch) {
-		return fmt.Errorf("you are currently on %v which is not alloed to force pushed", currentBranch.Branch)
+	if check.IsMainBranch(currentBranch.Branch) {
+		return fmt.Errorf("you are currently on %v which is not allowed to be force pushed", currentBranch.Branch)
 	}
 
 	execute.ExternalCommand("git", "push", "origin", "--force-with-lease", currentBranch.Branch)
@@ -44,12 +43,4 @@ func pushWithLease(ctx *cli.Context) error {
 	//git push origin --force-with-lease $BRANCH
 	//FIXME: If we do push the first time setup tracking branch as well.
 	return nil
-}
-
-func isMainBranch(branch string) bool {
-	branchWithoutSpaces := strings.TrimSpace(branch)
-	if branchWithoutSpaces == "main" || branchWithoutSpaces == "master" {
-		return true
-	}
-	return false
 }

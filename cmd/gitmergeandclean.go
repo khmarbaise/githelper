@@ -34,10 +34,9 @@ func mergeAndClean(ctx *cli.Context) error {
 
 	check.IfError(err)
 
-	//FIXME: Check for main/master
-	//if branch != "main" && branch != "master" {
-	//	fmt.Errorf("We are main/master.", branch)
-	//}
+	if check.IsMainBranch(currentBranch.Branch) {
+		return fmt.Errorf("you are currently on %v which you can not merge", currentBranch.Branch)
+	}
 
 	fmt.Printf("Branch name: %v\n", currentBranch.Branch)
 	fmt.Printf("Branch hash: %v\n", currentBranch.Hash)

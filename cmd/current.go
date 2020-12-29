@@ -24,6 +24,9 @@ func current(ctx *cli.Context) error {
 	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 
 	check.IfError(err)
+	if check.IsMainBranch(currentBranch.Branch) {
+		fmt.Println("you are on main branch.")
+	}
 
 	fmt.Printf(" name: %v\n", currentBranch.Branch)
 	fmt.Printf(" hash: %v\n", currentBranch.Hash)

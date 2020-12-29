@@ -24,6 +24,10 @@ func commitonissue(ctx *cli.Context) error {
 	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 	check.IfError(err)
 
+	if check.IsMainBranch(currentBranch.Branch) {
+		return fmt.Errorf("you are currently on %v where your are not allowed to commit", currentBranch.Branch)
+	}
+
 	fmt.Printf("%v\n", currentBranch.Branch)
 	fmt.Printf("%v\n", currentBranch.Hash)
 	//BRANCH=$(git symbolic-ref --short HEAD)
