@@ -30,6 +30,8 @@ func pushWithLease(ctx *cli.Context) error {
 	}
 
 	//FIXME: If we do push the first time setup tracking branch as well.
-	execute.ExternalCommand("git", "push", "origin", "--force-with-lease", currentBranch.Branch)
+	r, err := execute.ExternalCommandWithRedirect("git", "push", "origin", "--force-with-lease", currentBranch.Branch)
+	check.IfErrorWithOutput(err, r.Stdout, r.Stderr)
+
 	return nil
 }
