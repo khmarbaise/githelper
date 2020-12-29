@@ -23,6 +23,12 @@ func IfErrorWithOutput(err error, stdout string, stderr string) {
 	}
 
 	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
+
+	fmt.Println("---- stdout  ----")
+	fmt.Println(stdout)
+	fmt.Println("---- stderr  ----")
+	fmt.Println(stderr)
+
 	os.Exit(1)
 }
 
