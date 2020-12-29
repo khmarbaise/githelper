@@ -21,12 +21,13 @@ func ExternalCommand(cmd ...string) {
 	}
 }
 
+//CommandOutput represents the output of a command execution (stdout, stderr).
 type CommandOutput struct {
 	Stdout string
 	Stderr string
 }
 
-//ExternalCommand Execute external command as subprocess and return stdout and stderr
+//ExternalCommandB Execute external command as subprocess and return stdout and stderr
 //plus possible error.
 func ExternalCommandB(cmd ...string) (result CommandOutput, err error) {
 	log.Printf("Executing : %s ...\n", cmd)
