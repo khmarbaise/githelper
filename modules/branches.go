@@ -4,12 +4,29 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/khmarbaise/githelper/modules/check"
 	"strings"
 )
 
-//SearchForBranch Will search for the Branch names "master" and "main".
-func SearchForBranch(repository *git.Repository) error {
-	return nil
+//SearchForMainBranch Will search for the Branch name either "master" or "main".
+func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
+	branches, err := gitRepo.Branches()
+	check.IfError(err)
+
+	var branchNames []string
+	_ = branches.ForEach(func(branch *plumbing.Reference) error {
+		fmt.Printf(" -> %v hash:%v type:%v \n", branch.Name(), branch.Hash(), branch.Type())
+		branchName := strings.TrimPrefix(branch.Name().String(), BranchPrefix)
+		if check.IsMainBranch(branchName) {
+			branchNames = append(branchNames, branchName)
+		}
+		return nil
+	})
+
+	if len(branchNames) > 1 {
+		return "", fmt.Errorf("more than one branch %v found", branchNames)
+	}
+	return branchNames[0], nil
 }
 
 //CurrentBranch Defines information about current branch the name and the hash.

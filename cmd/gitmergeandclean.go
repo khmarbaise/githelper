@@ -4,12 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/khmarbaise/githelper/modules"
 	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/khmarbaise/githelper/modules/execute"
 	"github.com/urfave/cli/v2"
-	"strings"
 )
 
 var (
@@ -38,21 +36,11 @@ func mergeAndClean(ctx *cli.Context) error {
 		return fmt.Errorf("you are currently on %v which you can not merge", currentBranch.Branch)
 	}
 
-	fmt.Printf("Branch name: %v\n", currentBranch.Branch)
+	fmt.Printf("Branch name: #{currentBranch.Branch}\n")
 	fmt.Printf("Branch hash: %v\n", currentBranch.Hash)
 
-	branches, err := gitRepo.Branches()
+	branch, err := modules.SearchForMainBranch(gitRepo)
 	check.IfError(err)
-	var branchNames []string
-	_ = branches.ForEach(func(branch *plumbing.Reference) error {
-		fmt.Printf(" -> %v hash:%v type:%v \n", branch.Name(), branch.Hash(), branch.Type())
-		branchNames = append(branchNames, strings.TrimPrefix(branch.Name().String(), modules.BranchPrefix))
-		return nil
-	})
-
-	for _, branch := range branchNames {
-		fmt.Printf("Branch: '%v'\n", branch)
-	}
 
 	worktree, err := gitRepo.Worktree()
 	check.IfError(err)
@@ -78,11 +66,72 @@ func mergeAndClean(ctx *cli.Context) error {
 	//checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
 	//err = worktree.Checkout(&checkoutOptions)
 
-	//TODO: We should check for either master/main and use the one we found.
-	// modules.SearchForBranch(...)
-	execute.ExternalCommand("git", "checkout", "master")
+	execute.ExternalCommand("git", "checkout", branch)
 
 	fmt.Printf("\n")
 
 	return nil
+
+	//# If we are on another branch goto master
+	//git co master
+	//# Only allow fast-forward merges..
+	//git merge --ff-only $BRANCH
+	//if [ $? -ne 0 ]; then
+	//  echo "git merge can't be fast forwarded"
+	//  exit 1;
+	//fi
+	//git push origin master
+	//if [ $? -ne 0 ]; then
+	//  echo "git push to master has failed. rejected?"
+	//  exit 1;
+	//fi
+	//# Improvement
+	//#  Try to identify if a branch is remotely being tracked? or exists remotely?
+	//#
+	//# delete remote branch
+	//git push origin --delete $BRANCH
+	//if [ $? -ne 0 ]; then
+	//  echo "failed to delete $BRANCH ?"
+	//  exit 1;
+	//fi
+	//# delete local branch
+	//git branch -d $BRANCH
+	//#
+	//# Get the latest commit HASH
+	//#
+	//COMMITHASH=$(git rev-parse HEAD)
+	//#
+	//# Get the GIT URL from pom file:
+	//# TODO: Can we do some sanity checks? Yes: scm:git:..  if not FAIL!
+	//echo -n "Get the git url from pom file..."
+	//GITURL=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.scm.connection -q -DforceStdout | cut -d":" -f3-)
+	//echo " '$GITURL' done."
+	//GITPROJECT=$(basename $GITURL)
+	//GITBASE=$(dirname $GITURL)
+	//#
+	//#
+	//# Check if we are github project => GitHub issue tracker
+	//# Check if we are gitbox project => JIRA issue tracker
+	//#    We extracting 1. github.com
+	//#                  2. gitbox.apache.org
+	//GITHOST=$(echo $GITURL | cut -d ":" -f2- | cut -d "/" -f3 )
+	//if [ "$GITHOST" == "github.com" ]; then
+	//	echo "GitHub Issue Tracker"
+	//	exit 0;
+	//else
+	//	echo "JIRA Issue Tracker (Apache Project)"
+	//fi
+	//#
+	//CHECK_SESSION=$(jira-cli session --quiet)
+	//if [ $? -ne 0 ]; then
+	//  echo "You are not logged in on JIRA"
+	//	jira-cli login
+	//fi
+	//#
+	//echo "Closing JIRA issue $BRANCH"
+	//jira-cli close -m"Done in [$COMMITHASH|$GITBASE?p=$GITPROJECT;a=commitdiff;h=$COMMITHASH]" --resolution=Done $BRANCH
+	//## Error handling?
+	//echo "Closing finished."
+	//#
+
 }

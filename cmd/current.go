@@ -28,6 +28,27 @@ func current(ctx *cli.Context) error {
 		fmt.Println("you are on main branch.")
 	}
 
+	remotes, err := gitRepo.Remotes()
+	check.IfError(err)
+
+	for _, remote := range remotes {
+		fmt.Printf("Remote: '%v'\n", remote.String())
+		fmt.Printf("config: '%v'\n", remote.Config().Name)
+		fmt.Printf("fetch: '%v'\n", remote.Config().Fetch)
+		fmt.Println("--- Fetch --- ")
+		for _, f := range remote.Config().Fetch {
+			fmt.Printf(" ->        string: '%v'\n", f.String())
+			fmt.Printf(" ->      IsDelete: '%v'\n", f.IsDelete())
+			fmt.Printf(" ->       Reverse: '%v'\n", f.Reverse())
+			fmt.Printf(" -> IsForceUpdate: '%v'\n", f.IsForceUpdate())
+			fmt.Printf(" ->           src: '%v'\n", f.Src())
+		}
+		fmt.Println("--- URLs --- ")
+		for _, url := range remote.Config().URLs {
+			fmt.Printf(" ->     url: '%v'\n", url)
+		}
+	}
+
 	fmt.Printf(" name: %v\n", currentBranch.Branch)
 	fmt.Printf(" hash: %v\n", currentBranch.Hash)
 
