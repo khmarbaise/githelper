@@ -59,15 +59,23 @@ steps:
     event:
     - tag
 
-#- name: static
-#  image: golang:1.15
-#  environment:
-#    GOPROXY: https://goproxy.cn
-#  commands:
-#  - export PATH=$PATH:$GOPATH/bin
-#  - make release
-#  when:
-#    event:
-#    - push
-#    - tag
-#
+- name: static
+  image: golang:1.15
+  commands:
+  - make release
+  when:
+    event:
+    - tag
+
+- name: github
+  pull: always
+  image: plugins/github-release:1
+  settings:
+    files:
+      - "dist/release/*"
+  environment:
+    GITHUB_TOKEN:
+      from_secret: github_token
+  when:
+    event:
+      - tag
