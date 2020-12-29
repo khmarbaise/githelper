@@ -4,7 +4,10 @@
 
 # Status
 
-The current state of development is `Prototype`. Not usable at the moment.
+The current state of development is `Prototype`.
+
+* Scenario
+** Branch can be merged into main via `githelper gmc`
 
 # Overview
 

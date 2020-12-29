@@ -36,10 +36,10 @@ func mergeAndClean(ctx *cli.Context) error {
 		return fmt.Errorf("you are currently on %v which you can not merge", currentBranch.Branch)
 	}
 
-	fmt.Printf("Branch name: #{currentBranch.Branch}\n")
+	fmt.Printf("Branch name: %v\n", currentBranch.Branch)
 	fmt.Printf("Branch hash: %v\n", currentBranch.Hash)
 
-	branch, err := modules.SearchForMainBranch(gitRepo)
+	mainBranch, err := modules.SearchForMainBranch(gitRepo)
 	check.IfError(err)
 
 	worktree, err := gitRepo.Worktree()
@@ -54,49 +54,24 @@ func mergeAndClean(ctx *cli.Context) error {
 
 	//branchRef := plumbing.NewBranchReferenceName("master")
 
-	remote, err := gitRepo.Remote(currentBranch.Branch)
-	if err == nil {
-		fmt.Printf("Remote: %v\n", remote.Config())
-	} else {
-		//TODO: Reconsider: remote does not exist ! => Failure?
-		fmt.Printf("Remote branch %v not found  %v\n", currentBranch.Branch, err)
-		return err
-	}
-	fmt.Printf("Checking out %v...", "master")
-	//checkoutOptions := git.CheckoutOptions{Branch: branchRef, Create: false, Force: true, Keep: false}
-	//err = worktree.Checkout(&checkoutOptions)
+	fmt.Printf("Checking out %v\n", mainBranch)
+	execute.ExternalCommand("git", "checkout", mainBranch)
 
-	execute.ExternalCommand("git", "checkout", branch)
+	fmt.Printf("Merging %v into %v via fast forward only\n", currentBranch.Branch, mainBranch)
+	execute.ExternalCommand("git", "merge", "--ff-only", currentBranch.Branch)
 
-	fmt.Printf("\n")
+	fmt.Printf("Push %v to remote\n", mainBranch)
+	execute.ExternalCommand("git", "push", "origin", mainBranch)
+
+	fmt.Printf("Delete remote %v\n", currentBranch.Branch)
+	execute.ExternalCommand("git", "push", "origin", "--delete", currentBranch.Branch)
+
+	fmt.Printf("Delete local %v \n", currentBranch.Branch)
+	// We assume that the merge has been done successfully otherwise this will fail.
+	execute.ExternalCommand("git", "branch", "-d", currentBranch.Branch)
 
 	return nil
 
-	//# If we are on another branch goto master
-	//git co master
-	//# Only allow fast-forward merges..
-	//git merge --ff-only $BRANCH
-	//if [ $? -ne 0 ]; then
-	//  echo "git merge can't be fast forwarded"
-	//  exit 1;
-	//fi
-	//git push origin master
-	//if [ $? -ne 0 ]; then
-	//  echo "git push to master has failed. rejected?"
-	//  exit 1;
-	//fi
-	//# Improvement
-	//#  Try to identify if a branch is remotely being tracked? or exists remotely?
-	//#
-	//# delete remote branch
-	//git push origin --delete $BRANCH
-	//if [ $? -ne 0 ]; then
-	//  echo "failed to delete $BRANCH ?"
-	//  exit 1;
-	//fi
-	//# delete local branch
-	//git branch -d $BRANCH
-	//#
 	//# Get the latest commit HASH
 	//#
 	//COMMITHASH=$(git rev-parse HEAD)
