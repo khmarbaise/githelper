@@ -29,6 +29,7 @@ func main() {
 		&cmd.GitPushWithLease,
 		&cmd.Current,
 		&cmd.CommitOnIssue,
+		&cmd.JiraCli,
 	}
 	app.EnableBashCompletion = true
 	err := app.Run(os.Args)

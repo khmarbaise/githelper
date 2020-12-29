@@ -23,8 +23,9 @@ func ExternalCommand(cmd ...string) {
 
 //CommandOutput represents the output of a command execution (stdout, stderr).
 type CommandOutput struct {
-	Stdout string
-	Stderr string
+	Stdout   string
+	Stderr   string
+	ExitCode int
 }
 
 //ExternalCommandWithRedirect Execute external command as subprocess and return stdout and stderr
@@ -36,10 +37,28 @@ func ExternalCommandWithRedirect(cmd ...string) (result CommandOutput, err error
 	c.Stdout = &stdoutBuffer
 	c.Stderr = &stderrBuffer
 	if err := c.Start(); err != nil {
-		log.Panicln(err)
+		result = CommandOutput{Stdout: stdoutBuffer.String(), Stderr: stderrBuffer.String(), ExitCode: c.ProcessState.ExitCode()}
+		return result, err
+	}
+	if err = c.Wait(); err != nil {
+		result = CommandOutput{Stdout: stdoutBuffer.String(), Stderr: stderrBuffer.String(), ExitCode: c.ProcessState.ExitCode()}
+		return result, err
+	}
+	return CommandOutput{Stdout: stdoutBuffer.String(), Stderr: stderrBuffer.String(), ExitCode: c.ProcessState.ExitCode()}, nil
+}
+
+//ExternalCommandInteractive Execute external command as subprocess in interactive mode.
+func ExternalCommandInteractive(cmd ...string) (int, error) {
+	c := exec.Command(cmd[0], cmd[1:]...)
+
+	c.Stdout = os.Stdin
+	c.Stderr = os.Stderr
+	c.Stdin = os.Stdin
+	if err := c.Start(); err != nil {
+		return c.ProcessState.ExitCode(), err
 	}
 	if err := c.Wait(); err != nil {
-		log.Panicln(err)
+		return c.ProcessState.ExitCode(), err
 	}
-	return CommandOutput{Stdout: stdoutBuffer.String(), Stderr: stderrBuffer.String()}, nil
+	return c.ProcessState.ExitCode(), nil
 }
