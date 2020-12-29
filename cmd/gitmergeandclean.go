@@ -36,9 +36,6 @@ func mergeAndClean(ctx *cli.Context) error {
 		return fmt.Errorf("you are currently on %v which you can not merge", currentBranch.Branch)
 	}
 
-	fmt.Printf("Branch name: %v\n", currentBranch.Branch)
-	fmt.Printf("Branch hash: %v\n", currentBranch.Hash)
-
 	mainBranch, err := modules.SearchForMainBranch(gitRepo)
 	check.IfError(err)
 
@@ -52,27 +49,27 @@ func mergeAndClean(ctx *cli.Context) error {
 		return ErrorPleaseCommitYourChange
 	}
 
-	fmt.Printf("Checking out %v...", mainBranch)
+	fmt.Printf("Checking out '%v'...", mainBranch)
 	b, err := execute.ExternalCommandWithRedirect("git", "checkout", mainBranch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
 	fmt.Println("done.")
 
-	fmt.Printf("Merging %v into %v via fast forward only...", currentBranch.Branch, mainBranch)
+	fmt.Printf("Merging '%v' into '%v' via fast forward only...", currentBranch.Branch, mainBranch)
 	b, err = execute.ExternalCommandWithRedirect("git", "merge", "--ff-only", currentBranch.Branch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
 	fmt.Println("done.")
 
-	fmt.Printf("Push %v to remote...", mainBranch)
+	fmt.Printf("Push '%v' to remote...", mainBranch)
 	b, err = execute.ExternalCommandWithRedirect("git", "push", "origin", mainBranch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
 	fmt.Println("done.")
 
-	fmt.Printf("Delete remote %v...", currentBranch.Branch)
+	fmt.Printf("Delete remote branch '%v'...", currentBranch.Branch)
 	b, err = execute.ExternalCommandWithRedirect("git", "push", "origin", "--delete", currentBranch.Branch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
 	fmt.Println("done.")
 
-	fmt.Printf("Delete local %v...", currentBranch.Branch)
+	fmt.Printf("Delete local branch '%v'...", currentBranch.Branch)
 	// We assume that the merge has been done successfully otherwise this will fail.
 	b, err = execute.ExternalCommandWithRedirect("git", "branch", "-d", currentBranch.Branch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
