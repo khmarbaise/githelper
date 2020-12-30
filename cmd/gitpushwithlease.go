@@ -36,7 +36,8 @@ func pushWithLease(ctx *cli.Context) error {
 	if err != nil {
 		check.IfErrorWithOutput(err, r.Stdout, r.Stderr)
 	}
-	fmt.Printf("%v", r.Stdout)
+	// git push ... prints out result on stderr and not on stdout.
+	fmt.Printf("%v", r.Stderr)
 
 	return nil
 }

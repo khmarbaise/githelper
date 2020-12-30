@@ -34,6 +34,6 @@ func jiracli(ctx *cli.Context) error {
 
 	summary := jira.IssueSummary(currentBranch.Branch)
 
-	fmt.Printf("Jira summary: '%v'", summary)
+	fmt.Printf("Jira summary: '%v'\n", summary)
 	return nil
 }

@@ -18,6 +18,7 @@ var Current = cli.Command{
 }
 
 func current(ctx *cli.Context) error {
+
 	gitRepo, err := git.PlainOpen(".")
 	check.IfError(err)
 
@@ -34,7 +35,7 @@ func current(ctx *cli.Context) error {
 	for _, remote := range remotes {
 		fmt.Printf("Remote: '%v'\n", remote.String())
 		fmt.Printf("config: '%v'\n", remote.Config().Name)
-		fmt.Printf("fetch: '%v'\n", remote.Config().Fetch)
+		fmt.Printf(" fetch: '%v'\n", remote.Config().Fetch)
 		fmt.Println("--- Fetch --- ")
 		for _, f := range remote.Config().Fetch {
 			fmt.Printf(" ->        string: '%v'\n", f.String())
@@ -44,8 +45,16 @@ func current(ctx *cli.Context) error {
 			fmt.Printf(" ->           src: '%v'\n", f.Src())
 		}
 		fmt.Println("--- URLs --- ")
-		for _, url := range remote.Config().URLs {
-			fmt.Printf(" ->     url: '%v'\n", url)
+		for _, singleURL := range remote.Config().URLs {
+			fmt.Printf(" ->     singleURL: '%v'\n", singleURL)
+
+			parse, err := modules.ParseGitURI(singleURL)
+			check.IfError(err)
+
+			fmt.Printf("   *   host: %v\n", parse.Host)
+			fmt.Printf("   *   user: %v\n", parse.User)
+			fmt.Printf("   *   path: %v\n", parse.Path)
+			fmt.Printf("   * schema: %v\n", parse.Schema)
 		}
 	}
 
