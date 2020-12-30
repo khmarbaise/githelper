@@ -16,7 +16,7 @@ var (
 		Name:        "gitmergeandclean",
 		Aliases:     []string{"gmc"},
 		Usage:       "git merge and clean.",
-		Description: "Merge current branch via fast-forward into master.",
+		Description: "Merge current branch via fast-forward into master and delete the remote branch and afterwards the local branch as well..",
 		Action:      mergeAndClean,
 	}
 

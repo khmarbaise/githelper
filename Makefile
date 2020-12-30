@@ -1,5 +1,5 @@
 DIST := dist
-IMPORT := code.github.io/khmarbaise/githelper
+IMPORT := code.github.io/khmarbaise/gjh
 export GO111MODULE=on
 
 GO ?= go
@@ -9,9 +9,9 @@ SHASUM ?= shasum -a 256
 export PATH := $($(GO) env GOPATH)/bin:$(PATH)
 
 ifeq ($(OS), Windows_NT)
-	EXECUTABLE := githelper.exe
+	EXECUTABLE := gjh.exe
 else
-	EXECUTABLE := githelper
+	EXECUTABLE := gjh
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
 		SED_INPLACE := sed -i ''
@@ -49,9 +49,9 @@ SOURCES ?= $(shell find $(GO_DIRS) -name "*.go" -type f)
 TAGS ?=
 
 ifeq ($(OS), Windows_NT)
-	EXECUTABLE := githelper.exe
+	EXECUTABLE := gjh.exe
 else
-	EXECUTABLE := githelper
+	EXECUTABLE := gjh
 endif
 
 # $(call strip-suffix,filename)
@@ -154,7 +154,7 @@ release-os:
 	@hash gox > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
 		cd /tmp && $(GO) get -u github.com/mitchellh/gox; \
 	fi
-	CGO_ENABLED=0 gox -verbose -cgo=false -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)' -osarch='!darwin/386 !darwin/arm64 !darwin/arm' -os="windows linux darwin" -arch="386 amd64 arm arm64" -output="$(DIST)/release/githelper-$(VERSION)-{{.OS}}-{{.Arch}}"
+	CGO_ENABLED=0 gox -verbose -cgo=false -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)' -osarch='!darwin/386 !darwin/arm64 !darwin/arm' -os="windows linux darwin" -arch="386 amd64 arm arm64" -output="$(DIST)/release/gjh-$(VERSION)-{{.OS}}-{{.Arch}}"
 
 .PHONY: release-compress
 release-compress:

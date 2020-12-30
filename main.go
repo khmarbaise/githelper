@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// githelper is command line tool to support the handling of branches and merges with feature branches.
+// git-jira-helper is command line tool to support the handling of branches and merges with feature branches.
 package main
 
 import (
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// Version holds the current githelper version
+// Version holds the current gjh version
 var Version = "development"
 
 // Tags holds the build tags used
@@ -21,9 +21,11 @@ var Tags = ""
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "githelper"
-	app.Usage = "Git Helper."
+	app.Name = "gjh"
+	app.Usage = "Command line tool to support git/jira/issue tracking systems."
+	app.Description = "Git Jira Helper. Simpler handling of branches / jira support / issue tracking."
 	app.Version = Version + formatBuiltWith(Tags)
+	app.EnableBashCompletion = true
 	app.Commands = []*cli.Command{
 		&cmd.GitMergeAndClean,
 		&cmd.GitPushWithLease,

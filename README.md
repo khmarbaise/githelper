@@ -1,4 +1,4 @@
-# Git Helper
+# Git Jira Helper
 
 [![Build Status](https://cloud.drone.io/api/badges/khmarbaise/githelper/status.svg)](https://cloud.drone.io/khmarbaise/githelper)
 
@@ -7,8 +7,8 @@
 The current state of development is `Prototype`.
 
 * Scenario
-  * Branch can be merged into main via `githelper gmc`
-  * Branch can be pushed --force-with-lease `githelper pwl`
+  * Branch can be merged into main via `gjh gmc`
+  * Branch can be pushed --force-with-lease `gjh pwl`
 
 # Overview
 
