@@ -10,9 +10,9 @@ import (
 
 const noSessionExists = 1
 
-//JiraSession Will check if a session for jira-cli exists or not. If not it will call jira-cli interactive
+//Session Will check if a session for jira-cli exists or not. If not it will call jira-cli interactive
 // to create an appropriate session.
-func JiraSession() {
+func Session() {
 	b, err := execute.ExternalCommandWithRedirect("jira-cli", "session", "--quiet")
 	if b.ExitCode == noSessionExists && err != nil {
 		fmt.Println("There is not existing session for jira.")
@@ -21,8 +21,8 @@ func JiraSession() {
 	}
 }
 
-//JiraIssueSummary Call "jira-cli view $BRANCH" and extract the line "^summary: (.*)"
-func JiraIssueSummary(branch string) string {
+//IssueSummary Call "jira-cli view $BRANCH" and extract the line "^summary: (.*)"
+func IssueSummary(branch string) string {
 	b, err := execute.ExternalCommandWithRedirect("jira-cli", "view", branch)
 	check.IfError(err)
 	split := strings.Split(strings.Replace(b.Stdout, "\r\n", "\n", -1), "\n")

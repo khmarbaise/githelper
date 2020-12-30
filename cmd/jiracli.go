@@ -30,9 +30,9 @@ func jiracli(ctx *cli.Context) error {
 		fmt.Println("you are on main branch.")
 	}
 
-	jira.JiraSession()
+	jira.Session()
 
-	summary := jira.JiraIssueSummary(currentBranch.Branch)
+	summary := jira.IssueSummary(currentBranch.Branch)
 
 	fmt.Printf("Jira summary: '%v'", summary)
 	return nil
