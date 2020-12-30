@@ -1,6 +1,16 @@
 package modules
 
-// BranchPrefix base dir of the Branch information file store on git
-const BranchPrefix = "refs/heads/"
+import "strings"
 
-//FIXME: Maybe we should make this non public and move to another file? Need to reconsider.
+const summaryPrefix = "summary: "
+
+//ExtractSummary Extract a line "^summary: (.*)" from the jira output lines.
+func ExtractSummary(lines[] string) (result string){
+	result = ""
+	for _, line := range lines {
+		if strings.HasPrefix(line, summaryPrefix) {
+			result = line[len(summaryPrefix):]
+		}
+	}
+	return
+}

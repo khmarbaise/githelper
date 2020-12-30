@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+// branchPrefix base dir of the Branch information file store on git
+const branchPrefix = "refs/heads/"
+
 //SearchForMainBranch Will search for the Branch name either "master" or "main".
 func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
 	branches, err := gitRepo.Branches()
@@ -15,7 +18,7 @@ func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
 
 	var branchNames []string
 	_ = branches.ForEach(func(branch *plumbing.Reference) error {
-		branchName := strings.TrimPrefix(branch.Name().String(), BranchPrefix)
+		branchName := strings.TrimPrefix(branch.Name().String(), branchPrefix)
 		if check.IsMainBranch(branchName) {
 			branchNames = append(branchNames, branchName)
 		}
@@ -45,10 +48,10 @@ func GetCurrentBranch(gitRepo *git.Repository) (currentBranch CurrentBranch, err
 		return
 	}
 
-	if !strings.HasPrefix(ref.Name().String(), BranchPrefix) {
+	if !strings.HasPrefix(ref.Name().String(), branchPrefix) {
 		err = fmt.Errorf("invalid HEAD Branch: %v", ref.String())
 		return
 	}
 
-	return CurrentBranch{Branch: ref.Name().String()[len(BranchPrefix):], Hash: ref.Hash()}, nil
+	return CurrentBranch{Branch: ref.Name().String()[len(branchPrefix):], Hash: ref.Hash()}, nil
 }

@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/go-git/go-git/v5"
+	"github.com/khmarbaise/githelper/modules"
 	"github.com/khmarbaise/githelper/modules/check"
-	"github.com/khmarbaise/githelper/modules/execute"
+	"github.com/khmarbaise/githelper/modules/jira"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,20 +18,22 @@ var JiraCli = cli.Command{
 	Action:      jiracli,
 }
 
-const noSessionExists = 1
-
 func jiracli(ctx *cli.Context) error {
 
-	b, err := execute.ExternalCommandWithRedirect("jira-cli", "session", "--quiet")
-	if b.ExitCode == noSessionExists && err != nil {
-		_, err := execute.ExternalCommandInteractive("jira-cli", "login")
-		check.IfError(err)
+	gitRepo, err := git.PlainOpen(".")
+	check.IfError(err)
+
+	currentBranch, err := modules.GetCurrentBranch(gitRepo)
+
+	check.IfError(err)
+	if check.IsMainBranch(currentBranch.Branch) {
+		fmt.Println("you are on main branch.")
 	}
 
-	b, err = execute.ExternalCommandWithRedirect("jira-cli", "session", "--quiet")
-	fmt.Printf("    Code: %v\n", b.ExitCode)
-	fmt.Printf("  Stdout: %v\n", b.Stdout)
-	fmt.Printf("  Stderr: %v\n", b.Stderr)
+	jira.JiraSession()
 
+	summary := jira.JiraIssueSummary(currentBranch.Branch)
+
+	fmt.Printf("Jira summary: '%v'", summary)
 	return nil
 }
