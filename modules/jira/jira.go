@@ -29,3 +29,9 @@ func IssueSummary(branch string) string {
 
 	return modules.ExtractSummary(split)
 }
+
+//StartIssue Call "jira-cli start $BRANCH" to set the state of the issue to "in progress"
+func StartIssue(branch string) {
+	b, err := execute.ExternalCommandWithRedirect("jira-cli", "start", branch)
+	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
+}

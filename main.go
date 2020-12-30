@@ -32,6 +32,7 @@ func main() {
 		&cmd.Current,
 		&cmd.CommitOnIssue,
 		&cmd.JiraCli,
+		&cmd.StartIssue,
 	}
 	app.EnableBashCompletion = true
 	err := app.Run(os.Args)
