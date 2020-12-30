@@ -31,8 +31,6 @@ steps:
   settings:
     group: test
   when:
-    branch:
-    - main
     event:
     - push
     - pull_request
