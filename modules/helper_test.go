@@ -39,23 +39,31 @@ func Test_ParseGitUri(t *testing.T) {
 		{
 			name:      "First",
 			arguments: args{gituri: "git@192.168.0.110:/home/git/repos/gitea-install.git"},
-			expected:  URLParts{Schema: "ssh", User: "git", Host: "192.168.0.110", Path: "/home/git/repos/gitea-install.git"},
+			expected:  URLParts{Schema: "ssh", User: "git", Host: "192.168.0.110", Path: "/home/git/repos/gitea-install.git", Base: "/home/git/repos", Project: "gitea-install.git"},
 		},
 		{
 			name:      "Second",
 			arguments: args{gituri: "git@github.com:khmarbaise/githelper.git"},
-			expected:  URLParts{Schema: "ssh", User: "git", Host: "github.com", Path: "khmarbaise/githelper.git"},
+			expected:  URLParts{Schema: "ssh", User: "git", Host: "github.com", Path: "khmarbaise/githelper.git", Base: "khmarbaise", Project: "githelper.git"},
 		},
 		{
 			name:      "Third",
 			arguments: args{gituri: "ssh://git@github.com/khmarbaise/githelper.git"},
-			expected:  URLParts{Schema: "ssh", User: "git", Host: "github.com", Path: "/khmarbaise/githelper.git"},
+			expected:  URLParts{Schema: "ssh", User: "git", Host: "github.com", Path: "/khmarbaise/githelper.git", Base: "/khmarbaise", Project: "githelper.git"},
+		},
+		{
+			name:      "Forth",
+			arguments: args{gituri: "https://gitbox.apache.org/repos/asf/maven-ear-plugin.git"},
+			expected:  URLParts{Schema: "https", User: "", Host: "gitbox.apache.org", Path: "/repos/asf/maven-ear-plugin.git", Base: "/repos/asf", Project: "maven-ear-plugin.git"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if result, err := ParseGitURI(tt.arguments.gituri); err == nil && !reflect.DeepEqual(result, tt.expected) {
-				t.Errorf("ParseGitUrl(%v) current:'%v' result:'%v', expected: '%v'", tt.name, tt.arguments.gituri, result, tt.expected)
+				t.Errorf("ParseGitUrl(%v) \n"+
+					" current:  %v\n"+
+					"  result -> %v\n"+
+					"expected -> %v", tt.name, tt.arguments.gituri, result, tt.expected)
 			}
 		})
 	}

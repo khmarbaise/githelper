@@ -7,6 +7,8 @@ import (
 	"github.com/khmarbaise/githelper/modules"
 	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/khmarbaise/githelper/modules/execute"
+	"github.com/khmarbaise/githelper/modules/githelper"
+	"github.com/khmarbaise/githelper/modules/jira"
 	"github.com/urfave/cli/v2"
 )
 
@@ -75,43 +77,32 @@ func mergeAndClean(ctx *cli.Context) error {
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)
 	fmt.Println("done.")
 
+	uri := githelper.GetGitRemoteURI(gitRepo)
+
+	//TODO: Reconsider to handle this via a configuration.
+	switch uri.Host {
+	case "github.com":
+		fmt.Printf("--> Github.com\n")
+		// We don't need to do something because an issue will be closed automatically
+		// via "Fixed #" in commit message.
+		break
+	case "gitea.com":
+		fmt.Printf("--> Gitea.com\n")
+		// We don't need to do something because an issue will be closed automatically
+		// via "Fixed #" in commit message.
+		break
+	case "gitbox.apache.org":
+		fmt.Printf("--> Apache Gitbox\n")
+		jira.Session()
+		link := fmt.Sprintf("%v://%v%v?p=%v;h=%v", uri.Schema, uri.Host, uri.Base, uri.Project, currentBranch.Hash)
+		commitMessage := fmt.Sprintf("Done in [%v|%v]", currentBranch.Hash, link)
+		fmt.Printf("Closing issue %v...", currentBranch.Branch)
+		execute.ExternalCommandWithRedirect("jira-cli", "close", "-m", commitMessage, "--resolution=Done", currentBranch.Branch)
+		fmt.Println("Done.")
+		break
+	default:
+		return fmt.Errorf("unknown host %v used", uri.Host)
+	}
+
 	return nil
-
-	//# Get the latest commit HASH
-	//#
-	//COMMITHASH=$(git rev-parse HEAD)
-	//#
-	//# Get the GIT URL from pom file:
-	//# TODO: Can we do some sanity checks? Yes: scm:git:..  if not FAIL!
-	//echo -n "Get the git url from pom file..."
-	//GITURL=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.scm.connection -q -DforceStdout | cut -d":" -f3-)
-	//echo " '$GITURL' done."
-	//GITPROJECT=$(basename $GITURL)
-	//GITBASE=$(dirname $GITURL)
-	//#
-	//#
-	//# Check if we are github project => GitHub issue tracker
-	//# Check if we are gitbox project => JIRA issue tracker
-	//#    We extracting 1. github.com
-	//#                  2. gitbox.apache.org
-	//GITHOST=$(echo $GITURL | cut -d ":" -f2- | cut -d "/" -f3 )
-	//if [ "$GITHOST" == "github.com" ]; then
-	//	echo "GitHub Issue Tracker"
-	//	exit 0;
-	//else
-	//	echo "JIRA Issue Tracker (Apache Project)"
-	//fi
-	//#
-	//CHECK_SESSION=$(jira-cli session --quiet)
-	//if [ $? -ne 0 ]; then
-	//  echo "You are not logged in on JIRA"
-	//	jira-cli login
-	//fi
-	//#
-	//echo "Closing JIRA issue $BRANCH"
-	//jira-cli close -m"Done in [$COMMITHASH|$GITBASE?p=$GITPROJECT;a=commitdiff;h=$COMMITHASH]" --resolution=Done $BRANCH
-	//## Error handling?
-	//echo "Closing finished."
-	//#
-
 }
