@@ -27,8 +27,10 @@ var (
 )
 
 func mergeAndClean(ctx *cli.Context) error {
+	fmt.Printf("%v...", "Opening repository")
 	gitRepo, err := git.PlainOpen(".")
 	check.IfError(err)
+	fmt.Println("done.")
 
 	currentBranch, err := modules.GetCurrentBranch(gitRepo)
 
@@ -44,12 +46,14 @@ func mergeAndClean(ctx *cli.Context) error {
 	worktree, err := gitRepo.Worktree()
 	check.IfError(err)
 
+	fmt.Printf("%v...", "Check for changes...")
 	status, err := worktree.Status()
 	check.IfError(err)
 	if !status.IsClean() {
 		fmt.Println("Status: **NOT CLEAN**")
 		return ErrorPleaseCommitYourChange
 	}
+	fmt.Println("done.")
 
 	fmt.Printf("Checking out '%v'...", mainBranch)
 	b, err := execute.ExternalCommandWithRedirect("git", "checkout", mainBranch)
