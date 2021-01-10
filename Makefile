@@ -28,17 +28,17 @@ MAKE_VERSION := $(shell make -v | head -n 1)
 
 ifneq ($(DRONE_TAG),)
 	VERSION ?= $(subst v,,$(DRONE_TAG))
-	TEA_VERSION ?= $(VERSION)
+	GITHELPER_VERSION ?= $(VERSION)
 else
 	ifneq ($(DRONE_BRANCH),)
 		VERSION ?= $(subst release/v,,$(DRONE_BRANCH))
 	else
 		VERSION ?= master
 	endif
-	TEA_VERSION ?= $(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')
+	GITHELPER_VERSION ?= $(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')
 endif
 
-LDFLAGS := -X "main.Version=$(TEA_VERSION)" -X "main.Tags=$(TAGS)"
+LDFLAGS := -X "main.Version=$(GITHELPER_VERSION)" -X "main.Tags=$(TAGS)"
 
 GO_DIRS := cmd modules vendor
 GO_SOURCES := $(wildcard *.go)
