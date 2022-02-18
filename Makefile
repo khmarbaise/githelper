@@ -63,7 +63,7 @@ all: build
 .PHONY: clean
 clean:
 	$(GO) clean -mod=vendor -i ./...
-	rm -rf $(EXECUTABLE) $(DIST)
+	rm -rf $(EXECUTABLE) $(DIST) vendor
 
 .PHONY: fmt
 fmt:
@@ -137,7 +137,7 @@ install: $(wildcard *.go)
 	$(GO) install -mod=vendor -v -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)'
 
 .PHONY: build
-build: $(EXECUTABLE)
+build: vendor $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES)
 	$(GO) build -mod=vendor $(GOFLAGS) $(EXTRA_GOFLAGS) -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)' -o $@
