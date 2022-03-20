@@ -62,7 +62,6 @@ all: build
 
 .PHONY: clean
 clean:
-	$(GO) clean -mod=vendor -i ./...
 	rm -rf $(EXECUTABLE) $(DIST) vendor
 
 .PHONY: fmt
@@ -118,7 +117,8 @@ unit-test-coverage:
 
 .PHONY: vendor
 vendor:
-	$(GO) mod tidy && $(GO) mod vendor
+	$(GO) mod vendor
+	$(GO) mod tidy
 
 .PHONY: test-vendor
 test-vendor: vendor

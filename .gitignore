@@ -4,4 +4,5 @@ gjh
 .idea/
 .history/
 dist/
+vendor
 coverage.out
