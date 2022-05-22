@@ -11,42 +11,6 @@ type Generic interface {
 	String() string
 }
 
-// GenericFlag is a flag with type Generic
-type GenericFlag struct {
-	Name        string
-	Aliases     []string
-	Usage       string
-	EnvVars     []string
-	FilePath    string
-	Required    bool
-	Hidden      bool
-	TakesFile   bool
-	Value       Generic
-	DefaultText string
-	HasBeenSet  bool
-}
-
-// IsSet returns whether or not the flag has been set through env or file
-func (f *GenericFlag) IsSet() bool {
-	return f.HasBeenSet
-}
-
-// String returns a readable representation of this value
-// (for usage defaults)
-func (f *GenericFlag) String() string {
-	return FlagStringer(f)
-}
-
-// Names returns the names of the flag
-func (f *GenericFlag) Names() []string {
-	return flagNames(f.Name, f.Aliases)
-}
-
-// IsRequired returns whether or not the flag is required
-func (f *GenericFlag) IsRequired() bool {
-	return f.Required
-}
-
 // TakesValue returns true of the flag takes a value, otherwise false
 func (f *GenericFlag) TakesValue() bool {
 	return true
@@ -64,6 +28,19 @@ func (f *GenericFlag) GetValue() string {
 		return f.Value.String()
 	}
 	return ""
+}
+
+// GetDefaultText returns the default text for this flag
+func (f *GenericFlag) GetDefaultText() string {
+	if f.DefaultText != "" {
+		return f.DefaultText
+	}
+	return f.GetValue()
+}
+
+// GetEnvVars returns the env vars for this flag
+func (f *GenericFlag) GetEnvVars() []string {
+	return f.EnvVars
 }
 
 // Apply takes the flagset and calls Set on the generic flag with the value
@@ -86,10 +63,15 @@ func (f GenericFlag) Apply(set *flag.FlagSet) error {
 	return nil
 }
 
+// Get returns the flag’s value in the given Context.
+func (f *GenericFlag) Get(ctx *Context) interface{} {
+	return ctx.Generic(f.Name)
+}
+
 // Generic looks up the value of a local GenericFlag, returns
 // nil if not found
-func (c *Context) Generic(name string) interface{} {
-	if fs := lookupFlagSet(name, c); fs != nil {
+func (cCtx *Context) Generic(name string) interface{} {
+	if fs := cCtx.lookupFlagSet(name); fs != nil {
 		return lookupGeneric(name, fs)
 	}
 	return nil
