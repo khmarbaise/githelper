@@ -17,7 +17,9 @@ func IfError(err error) {
 }
 
 // IfErrorWithOutput should be used to naively panics if an error is not nil.
-func IfErrorWithOutput(err error, stdout string, stderr string) {
+func IfErrorWithOutput(err error,
+	stdout string,
+	stderr string) {
 	if err == nil {
 		return
 	}
