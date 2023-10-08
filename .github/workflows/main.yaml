@@ -23,4 +23,5 @@ jobs:
           make clean
           make fmt-check
           make test-vendor
+          make test
           make build
