@@ -21,7 +21,7 @@ endif
 GOFILES := $(shell find . -name "*.go" -type f ! -path "./vendor/*" ! -path "*/bindata.go")
 GOFMT ?= gofmt -s
 
-GOFLAGS := -i -v
+GOFLAGS := -v
 EXTRA_GOFLAGS ?=
 
 MAKE_VERSION := $(shell make -v | head -n 1)
@@ -62,7 +62,7 @@ all: build
 
 .PHONY: clean
 clean:
-	$(GO) clean -mod=vendor -i ./...
+	$(GO) clean -mod=vendor ./...
 	rm -rf $(EXECUTABLE) $(DIST)
 
 .PHONY: fmt
