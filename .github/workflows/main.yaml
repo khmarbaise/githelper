@@ -26,4 +26,3 @@ jobs:
           make misspell-check
           make test-vendor
           make build
-
