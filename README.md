@@ -1,6 +1,6 @@
 # Git Jira Helper
 
-[![Build Status](https://cloud.drone.io/api/badges/khmarbaise/githelper/status.svg)](https://cloud.drone.io/khmarbaise/githelper)
+[![Main](https://github.com/khmarbaise/githelper/actions/workflows/main.yaml/badge.svg)](https://github.com/khmarbaise/githelper/actions/workflows/main.yaml)
 
 # Status
 
