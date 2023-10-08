@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-//Test_Main_first Integration test to execute our own executable within a test.
+// Test_Main_first Integration test to execute our own executable within a test.
 func Test_Main_first(t *testing.T) {
 	t.Run("Execute gjh with --help", func(t *testing.T) {
 		//Execute our own produced executable for testing purposes.

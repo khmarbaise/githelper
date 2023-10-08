@@ -10,7 +10,7 @@ import (
 
 const summaryPrefix = "summary: "
 
-//ExtractSummary Extract a line "^summary: (.*)" from the jira output lines.
+// ExtractSummary Extract a line "^summary: (.*)" from the jira output lines.
 func ExtractSummary(lines []string) (result string) {
 	result = ""
 	for _, line := range lines {
@@ -21,7 +21,7 @@ func ExtractSummary(lines []string) (result string) {
 	return
 }
 
-//URLParts The parts of an git remote url.
+// URLParts The parts of an git remote url.
 type URLParts struct {
 	User    string
 	Schema  string
@@ -35,8 +35,8 @@ func (u URLParts) String() string {
 	return fmt.Sprintf("User: '%v' Schema: '%v' Host: '%v' Path: '%v' Base: '%v' Project: '%v'", u.User, u.Schema, u.Host, u.Path, u.Base, u.Project)
 }
 
-//ParseGitURI Will parse a URL which is given by `git remote -v`
-//TODO: Reconsider if this is really necessary at all?
+// ParseGitURI Will parse a URL which is given by `git remote -v`
+// TODO: Reconsider if this is really necessary at all?
 func ParseGitURI(uri string) (URLParts, error) {
 	parts := URLParts{}
 	if strings.HasPrefix(uri, "git@") {

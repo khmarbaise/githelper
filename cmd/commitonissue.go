@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//CommitOnIssue Uses the information from JIRA as a commit message.
+// CommitOnIssue Uses the information from JIRA as a commit message.
 var CommitOnIssue = cli.Command{
 	Name:        "commitonissue",
 	Aliases:     []string{"coi"},

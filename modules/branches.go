@@ -11,7 +11,7 @@ import (
 // branchPrefix base dir of the Branch information file store on git
 const branchPrefix = "refs/heads/"
 
-//SearchForMainBranch Will search for the Branch name either "master" or "main".
+// SearchForMainBranch Will search for the Branch name either "master" or "main".
 func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
 	branches, err := gitRepo.Branches()
 	check.IfError(err)
@@ -31,13 +31,13 @@ func SearchForMainBranch(gitRepo *git.Repository) (branch string, err error) {
 	return branchNames[0], nil
 }
 
-//CurrentBranch Defines information about current branch the name and the hash.
+// CurrentBranch Defines information about current branch the name and the hash.
 type CurrentBranch struct {
 	Branch string
 	Hash   plumbing.Hash
 }
 
-//GetCurrentBranch Get the current Branch like /refs/head/main and returns "main" incl. Hash code.
+// GetCurrentBranch Get the current Branch like /refs/head/main and returns "main" incl. Hash code.
 // This is the equivalent of "git symbolic-ref --short HEAD".
 func GetCurrentBranch(gitRepo *git.Repository) (currentBranch CurrentBranch, err error) {
 	currentBranch = CurrentBranch{}

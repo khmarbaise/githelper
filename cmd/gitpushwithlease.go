@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//GitPushWithLease git push with lease.
+// GitPushWithLease git push with lease.
 var GitPushWithLease = cli.Command{
 	Name:        "gitpushwithlease",
 	Aliases:     []string{"pwl"},

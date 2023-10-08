@@ -10,7 +10,7 @@ import (
 
 const noSessionExists = 1
 
-//Session Will check if a session for jira-cli exists or not. If not it will call jira-cli interactive
+// Session Will check if a session for jira-cli exists or not. If not it will call jira-cli interactive
 // to create an appropriate session.
 func Session() {
 	b, err := execute.ExternalCommandWithRedirect("jira-cli", "session", "--quiet")
@@ -21,7 +21,7 @@ func Session() {
 	}
 }
 
-//IssueSummary Call "jira-cli view $BRANCH" and extract the line "^summary: (.*)"
+// IssueSummary Call "jira-cli view $BRANCH" and extract the line "^summary: (.*)"
 func IssueSummary(branch string) string {
 	b, err := execute.ExternalCommandWithRedirect("jira-cli", "view", branch)
 	check.IfError(err)
@@ -30,7 +30,7 @@ func IssueSummary(branch string) string {
 	return modules.ExtractSummary(split)
 }
 
-//StartIssue Call "jira-cli start $BRANCH" to set the state of the issue to "in progress"
+// StartIssue Call "jira-cli start $BRANCH" to set the state of the issue to "in progress"
 func StartIssue(branch string) {
 	b, err := execute.ExternalCommandWithRedirect("jira-cli", "start", branch)
 	check.IfErrorWithOutput(err, b.Stdout, b.Stderr)

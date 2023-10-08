@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-//ExternalCommand Execute external command as subprocess.
+// ExternalCommand Execute external command as subprocess.
 func ExternalCommand(cmd ...string) {
 	log.Printf("Executing : %s ...\n", cmd)
 	c := exec.Command(cmd[0], cmd[1:]...)
@@ -21,15 +21,15 @@ func ExternalCommand(cmd ...string) {
 	}
 }
 
-//CommandOutput represents the output of a command execution (stdout, stderr).
+// CommandOutput represents the output of a command execution (stdout, stderr).
 type CommandOutput struct {
 	Stdout   string
 	Stderr   string
 	ExitCode int
 }
 
-//ExternalCommandWithRedirect Execute external command as subprocess and return stdout and stderr
-//plus possible error.
+// ExternalCommandWithRedirect Execute external command as subprocess and return stdout and stderr
+// plus possible error.
 func ExternalCommandWithRedirect(cmd ...string) (result CommandOutput, err error) {
 	c := exec.Command(cmd[0], cmd[1:]...)
 
@@ -47,7 +47,7 @@ func ExternalCommandWithRedirect(cmd ...string) (result CommandOutput, err error
 	return CommandOutput{Stdout: stdoutBuffer.String(), Stderr: stderrBuffer.String(), ExitCode: c.ProcessState.ExitCode()}, nil
 }
 
-//ExternalCommandInteractive Execute external command as subprocess in interactive mode.
+// ExternalCommandInteractive Execute external command as subprocess in interactive mode.
 func ExternalCommandInteractive(cmd ...string) (int, error) {
 	c := exec.Command(cmd[0], cmd[1:]...)
 

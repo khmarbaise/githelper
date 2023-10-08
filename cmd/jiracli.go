@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//JiraCli Just calling jira-cli for testing purposes.
+// JiraCli Just calling jira-cli for testing purposes.
 var JiraCli = cli.Command{
 	Name:        "jira",
 	Aliases:     []string{"jira"},

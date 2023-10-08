@@ -32,7 +32,7 @@ func IfErrorWithOutput(err error, stdout string, stderr string) {
 	os.Exit(1)
 }
 
-//IsMainBranch check for "main" or "master" and return true, false otherwise.
+// IsMainBranch check for "main" or "master" and return true, false otherwise.
 func IsMainBranch(branch string) bool {
 	branchWithoutSpaces := strings.TrimSpace(branch)
 	if branchWithoutSpaces == "main" || branchWithoutSpaces == "master" {

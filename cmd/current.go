@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//Current prints out some information about the current branch.
+// Current prints out some information about the current branch.
 var Current = cli.Command{
 	Name:        "current",
 	Aliases:     []string{"cr"},

@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-//StartIssue Just setting an existing issue into state "in progress"
+// StartIssue Just setting an existing issue into state "in progress"
 var StartIssue = cli.Command{
 	Name:        "startissue",
 	Aliases:     []string{"si"},

@@ -7,7 +7,7 @@ import (
 	"github.com/khmarbaise/githelper/modules/check"
 )
 
-//GetGitRemoteURI Get the remote URI of the current git repository.
+// GetGitRemoteURI Get the remote URI of the current git repository.
 func GetGitRemoteURI(gitRepo *git.Repository) (urlParts modules.URLParts) {
 
 	remotes, err := gitRepo.Remotes()
