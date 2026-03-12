@@ -2,10 +2,11 @@ package jira
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/khmarbaise/githelper/modules"
 	"github.com/khmarbaise/githelper/modules/check"
 	"github.com/khmarbaise/githelper/modules/execute"
-	"strings"
 )
 
 const noSessionExists = 1

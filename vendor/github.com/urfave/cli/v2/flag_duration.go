@@ -16,6 +16,11 @@ func (f *DurationFlag) GetUsage() string {
 	return f.Usage
 }
 
+// GetCategory returns the category for the flag
+func (f *DurationFlag) GetCategory() string {
+	return f.Category
+}
+
 // GetValue returns the flags value as string representation and an empty
 // string if the flag takes no value at all.
 func (f *DurationFlag) GetValue() string {
@@ -27,7 +32,10 @@ func (f *DurationFlag) GetDefaultText() string {
 	if f.DefaultText != "" {
 		return f.DefaultText
 	}
-	return f.GetValue()
+	if f.defaultValueSet {
+		return f.defaultValue.String()
+	}
+	return f.Value.String()
 }
 
 // GetEnvVars returns the env vars for this flag
@@ -37,12 +45,16 @@ func (f *DurationFlag) GetEnvVars() []string {
 
 // Apply populates the flag given the flag set and environment
 func (f *DurationFlag) Apply(set *flag.FlagSet) error {
-	if val, ok := flagFromEnvOrFile(f.EnvVars, f.FilePath); ok {
+	// set default value so that environment wont be able to overwrite it
+	f.defaultValue = f.Value
+	f.defaultValueSet = true
+
+	if val, source, found := flagFromEnvOrFile(f.EnvVars, f.FilePath); found {
 		if val != "" {
 			valDuration, err := time.ParseDuration(val)
 
 			if err != nil {
-				return fmt.Errorf("could not parse %q as duration value for flag %s: %s", val, f.Name, err)
+				return fmt.Errorf("could not parse %q as duration value from %s for flag %s: %s", val, source, f.Name, err)
 			}
 
 			f.Value = valDuration
@@ -63,6 +75,15 @@ func (f *DurationFlag) Apply(set *flag.FlagSet) error {
 // Get returns the flag’s value in the given Context.
 func (f *DurationFlag) Get(ctx *Context) time.Duration {
 	return ctx.Duration(f.Name)
+}
+
+// RunAction executes flag action if set
+func (f *DurationFlag) RunAction(c *Context) error {
+	if f.Action != nil {
+		return f.Action(c, c.Duration(f.Name))
+	}
+
+	return nil
 }
 
 // Duration looks up the value of a local DurationFlag, returns

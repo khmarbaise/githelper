@@ -165,4 +165,4 @@ release-compress:
 
 .PHONY: release-check
 release-check:
-	cd $(DIST)/release/; for file in `find . -type f -name "*"`; do echo "checksumming $${file}" && $(SHASUM) `echo $${file} | sed 's/^..//'` > $${file}.sha256; done;
+	cd $(DIST)/release/; for file in `find . -type f -name "*"`; do echo "check summing $${file}" && $(SHASUM) `echo $${file} | sed 's/^..//'` > $${file}.sha256; done;

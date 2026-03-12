@@ -16,6 +16,11 @@ func (f *Float64Flag) GetUsage() string {
 	return f.Usage
 }
 
+// GetCategory returns the category for the flag
+func (f *Float64Flag) GetCategory() string {
+	return f.Category
+}
+
 // GetValue returns the flags value as string representation and an empty
 // string if the flag takes no value at all.
 func (f *Float64Flag) GetValue() string {
@@ -27,7 +32,10 @@ func (f *Float64Flag) GetDefaultText() string {
 	if f.DefaultText != "" {
 		return f.DefaultText
 	}
-	return f.GetValue()
+	if f.defaultValueSet {
+		return fmt.Sprintf("%v", f.defaultValue)
+	}
+	return fmt.Sprintf("%v", f.Value)
 }
 
 // GetEnvVars returns the env vars for this flag
@@ -37,11 +45,14 @@ func (f *Float64Flag) GetEnvVars() []string {
 
 // Apply populates the flag given the flag set and environment
 func (f *Float64Flag) Apply(set *flag.FlagSet) error {
-	if val, ok := flagFromEnvOrFile(f.EnvVars, f.FilePath); ok {
+	f.defaultValue = f.Value
+	f.defaultValueSet = true
+
+	if val, source, found := flagFromEnvOrFile(f.EnvVars, f.FilePath); found {
 		if val != "" {
 			valFloat, err := strconv.ParseFloat(val, 64)
 			if err != nil {
-				return fmt.Errorf("could not parse %q as float64 value for flag %s: %s", val, f.Name, err)
+				return fmt.Errorf("could not parse %q as float64 value from %s for flag %s: %s", val, source, f.Name, err)
 			}
 
 			f.Value = valFloat
@@ -63,6 +74,15 @@ func (f *Float64Flag) Apply(set *flag.FlagSet) error {
 // Get returns the flag’s value in the given Context.
 func (f *Float64Flag) Get(ctx *Context) float64 {
 	return ctx.Float64(f.Name)
+}
+
+// RunAction executes flag action if set
+func (f *Float64Flag) RunAction(c *Context) error {
+	if f.Action != nil {
+		return f.Action(c, c.Float64(f.Name))
+	}
+
+	return nil
 }
 
 // Float64 looks up the value of a local Float64Flag, returns

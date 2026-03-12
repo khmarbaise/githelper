@@ -2,10 +2,11 @@ package modules
 
 import (
 	"fmt"
-	"github.com/khmarbaise/githelper/modules/check"
 	"net/url"
 	"path/filepath"
 	"strings"
+
+	"github.com/khmarbaise/githelper/modules/check"
 )
 
 const summaryPrefix = "summary: "

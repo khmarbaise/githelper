@@ -7,10 +7,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/khmarbaise/githelper/cmd"
-	"github.com/urfave/cli/v2"
 	"os"
 	"strings"
+
+	"github.com/khmarbaise/githelper/cmd"
+	"github.com/urfave/cli/v2"
 )
 
 // Version holds the current gjh version

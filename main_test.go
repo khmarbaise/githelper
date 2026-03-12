@@ -5,8 +5,9 @@
 package main_test
 
 import (
-	"github.com/khmarbaise/githelper/modules/execute"
 	"testing"
+
+	"github.com/khmarbaise/githelper/modules/execute"
 )
 
 // Test_Main_first Integration test to execute our own executable within a test.

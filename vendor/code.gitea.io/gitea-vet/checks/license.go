@@ -1,6 +1,5 @@
 // Copyright 2020 The Gitea Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style
-// license that can be found in the LICENSE file.
+// SPDX-License-Identifier: MIT
 
 package checks
 
@@ -12,7 +11,9 @@ import (
 )
 
 var (
-	header     = regexp.MustCompile(`.*Copyright.*\d{4}.*(Gitea|Gogs)`)
+	copyrightRegx  = regexp.MustCompile(`.*Copyright.*\d{4}.*(Gitea|Gogs)`)
+	identifierRegx = regexp.MustCompile(`SPDX-License-Identifier: [\w.-]+`)
+
 	goGenerate = "//go:generate"
 	buildTag   = "// +build"
 )
@@ -58,15 +59,21 @@ func runLicense(pass *analysis.Pass) (interface{}, error) {
 			continue
 		}
 
-		var check bool
+		var copyright, identifier bool
 		for _, comment := range file.Comments[commentGroup].List {
-			if header.MatchString(comment.Text) {
-				check = true
+			if copyrightRegx.MatchString(comment.Text) {
+				copyright = true
+			}
+			if identifierRegx.MatchString(comment.Text) {
+				identifier = true
 			}
 		}
 
-		if !check {
+		if !copyright {
 			pass.Reportf(file.Pos(), "Copyright did not match check")
+		}
+		if !identifier {
+			pass.Reportf(file.Pos(), "SPDX-License-Identifier did not match check")
 		}
 	}
 	return nil, nil
